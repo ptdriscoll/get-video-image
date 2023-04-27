@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Get Image</title>
+    <style>
+      html {
+        font-size: 10px;
+      }
+      .hide {
+        display: none;
+      }
+      #app.text-container {
+        max-width: 800px;
+        text-align: center;
+        font-size: 1.6rem;
+        font-weight: 400;
+        line-height: 1.625;
+        margin: 0 auto;
+        word-break: break-word;
+        padding: 0px 16px 16px 16px;
+      }
+      #get_image > input,
+      #get_image > button {
+        box-sizing: border-box;
+        font-size: 1.6rem;
+        font-weight: 400;
+        margin-bottom: 1rem;
+      }
+      #get_image > input {
+        min-width: 100%;
+        line-height: 1.625;
+        padding: 0 1.6rem;
+        height: 5rem;
+      }
+      #dev #get_image > button {
+        padding: 16px;
+      }
+      #image_url,
+      #image_show {
+        margin-top: 1.6rem;
+      }
+      #image_url {
+        font-weight: bold;
+      }
+      #image_url a {
+        font-weight: normal;
+      }
+      #image_show {
+        max-width: 100%;
+      }
+      #error_show {
+        max-width: 600px;
+        margin: 1.6rem auto 0;
+        text-align: left;
+        color: red;
+      }
+    </style>
+  </head>
+  <body id="dev">
+    <div id="app" class="text-container">
+      <form id="get_image" name="get_image">
+        <input
+          type="text"
+          name="url"
+          placeholder="Enter an URL for a video hosted on KLRN, PBS or YouTube"
+        />
+        <button type="submit" class="klrn_button read-more__link">
+          Submit
+        </button>
+      </form>
+
+      <p id="image_url" class="hide">Image URL: <a></a></p>
+
+      <img id="image_show" class="hide" />
+      <div id="error_show" class="hide">
+        <p>
+          An image could not be found. Be sure the URL is a valid URL for a
+          video, and the video is hosted on either video.klrn.org, video.pbs.org
+          or youtube.com.
+        </p>
+        <p>
+          Also, for a YouTube video, do not use a short URL. If you have a short
+          URL, click on the URL to get the final URL, which should end with a
+          "v=" followed by the video ID.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      const getWebpageAPI = 'http://localhost/get-image/api/get-webpage.php';
+      const form = document.querySelector('#get_image');
+      form.addEventListener('submit', submit);
+
+      function submit(e) {
+        e.preventDefault();
+        document.querySelector('#image_url').classList.add('hide');
+        document.querySelector('#image_show').classList.add('hide');
+        document.querySelector('#error_show').classList.add('hide');
+
+        let image;
+        let formInput = form.querySelector('input[name="url"]');
+        const url = formInput.value.trim();
+        formInput.value = '';
+        const isValid = isValidURL(url);
+        if (isValid) getImage(url);
+        else {
+          document.querySelector('#error_show').classList.remove('hide');
+        }
+      }
+
+      function isValidURL(url) {
+        try {
+          const urlObj = new URL(url);
+          const isValidProtocol = urlObj.protocol === 'https:';
+          const isValidHost =
+            urlObj.hostname === 'video.klrn.org' ||
+            urlObj.hostname === 'video.pbs.org' ||
+            urlObj.hostname === 'www.youtube.com';
+          const isValidYT =
+            urlObj.hostname === 'www.youtube.com' ? url.includes('v=') : true;
+          return isValidProtocol && isValidHost && isValidYT;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function getImage(url) {
+        if (url.includes('v=')) {
+          const id = url.split('v=')[1];
+          showImage(`https://img.youtube.com/vi/${id}/maxresdefault.jpg`);
+        } else {
+          let image = '';
+          fetch(`${getWebpageAPI}?url=${url}`)
+            .then((res) => res.text())
+            .then((text) => {
+              let arr = [];
+              if (text) arr = text.split(`style="--background-image: url('`);
+              if (arr.length > 1) image = arr[1].split('?')[0].trim();
+              if (image) image += '?crop=1280x720';
+              showImage(image);
+            });
+        }
+      }
+
+      function showImage(image) {
+        if (image) {
+          const imageURL = document.querySelector('#image_url');
+          const imageLink = imageURL.querySelector('a');
+          const imageShow = document.querySelector('#image_show');
+
+          imageLink.innerHTML = image;
+          imageLink.href = image;
+          imageShow.src = image;
+          imageURL.classList.remove('hide');
+          imageShow.classList.remove('hide');
+        } else {
+          document.querySelector('#error_show').classList.remove('hide');
+        }
+      }
+    </script>
+  </body>
+</html>
