@@ -2,8 +2,6 @@
 
 This is an application to get images by using URLS for videos hosted on either video.klrn.org, video.pbs.org or youtube.com.
 
-The app does not handle redirects, such as short URLs used by YouTube. Instead, the final destination URL should be used, which in the case of YouTube ends with a "v=" followed by the video ID.
-
 ![KLRN.org get-image page](images/get-image-after.jpg)
 
 ### Setup

@@ -81,11 +81,6 @@
           video, and the video is hosted on either video.klrn.org, video.pbs.org
           or youtube.com.
         </p>
-        <p>
-          Also, for a YouTube video, do not use a short URL. If you have a short
-          URL, click on the URL to get the final URL, which should end with a
-          "v=" followed by the video ID.
-        </p>
       </div>
     </div>
 
@@ -102,10 +97,10 @@
 
         let image;
         let formInput = form.querySelector('input[name="url"]');
-        const url = formInput.value.trim();
+        const url = formInput.value.replace(/\s/g, '');
         formInput.value = '';
         const isValid = isValidURL(url);
-        if (isValid) getImage(url);
+        if (isValid) getImage(url, isValid);
         else {
           document.querySelector('#error_show').classList.remove('hide');
         }
@@ -118,18 +113,21 @@
           const isValidHost =
             urlObj.hostname === 'video.klrn.org' ||
             urlObj.hostname === 'video.pbs.org' ||
-            urlObj.hostname === 'www.youtube.com';
-          const isValidYT =
-            urlObj.hostname === 'www.youtube.com' ? url.includes('v=') : true;
-          return isValidProtocol && isValidHost && isValidYT;
+            urlObj.hostname === 'www.youtube.com' ||
+            urlObj.hostname === 'youtu.be';
+          return isValidProtocol && isValidHost ? urlObj.hostname : '';
         } catch (e) {
           return false;
         }
       }
 
-      function getImage(url) {
-        if (url.includes('v=')) {
-          const id = url.split('v=')[1];
+      function getImage(url, host) {
+        const urlObj = new URL(url);
+        if (host === 'www.youtube.com' || host === 'youtu.be') {
+          const splitter = url.includes('v=') ? 'v=' : '/';
+          const urlTrim = url.endsWith('/') ? url.slice(0, -1) : url;
+          let id = urlTrim.split(splitter);
+          id = id[id.length - 1];
           showImage(`https://img.youtube.com/vi/${id}/maxresdefault.jpg`);
         } else {
           let image = '';
