@@ -1,6 +1,6 @@
 # Get an image from a PBS or YouTube video
 
-This is an application to get images by using URLS for videos hosted on either video.klrn.org, video.pbs.org or youtube.com.
+This is an application to get images by using URLS for videos hosted on either video.klrn.org, video.pbs.org, youtube.com or youtu.be.
 
 ![KLRN.org get-image page](images/get-image-after.jpg)
 
