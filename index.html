@@ -128,6 +128,7 @@
           const urlTrim = url.endsWith('/') ? url.slice(0, -1) : url;
           let id = urlTrim.split(splitter);
           id = id[id.length - 1];
+          id = id.split('&list=')[0]; //remove any extra playlist id
           showImage(`https://img.youtube.com/vi/${id}/maxresdefault.jpg`);
         } else {
           let image = '';
