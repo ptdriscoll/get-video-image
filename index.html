@@ -125,10 +125,12 @@
         const urlObj = new URL(url);
         if (host === 'www.youtube.com' || host === 'youtu.be') {
           const splitter = url.includes('v=') ? 'v=' : '/';
-          const urlTrim = url.endsWith('/') ? url.slice(0, -1) : url;
+          urlTrim = url.endsWith('/') ? url.slice(0, -1) : url;
           let id = urlTrim.split(splitter);
           id = id[id.length - 1];
-          id = id.split('&list=')[0]; //remove any extra playlist id
+          id = id.split('?')[0]; //remove any query, like an si key and value
+          id = id.split('&')[0]; //remove any query fragemnt, like for a playlist
+
           showImage(`https://img.youtube.com/vi/${id}/maxresdefault.jpg`);
         } else {
           let image = '';
