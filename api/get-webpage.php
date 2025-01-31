@@ -14,12 +14,12 @@
     $parse = parse_url($url);
     $host = isset($parse['host']) ? $parse['host'] : '';
 
-    if ($host == 'video.klrn.org' || $host == 'video.pbs.org') {
+    if ($host == 'video.klrn.org' || $host == 'www.pbs.org') {
         $html = file_get_contents($url);
         echo $html;
     }    
     else {
         echo 'HTTP ORIGIN: ' . $http_origin . '<br>';
-        echo 'ERROR: URL must be hosted by video.klrn.org or video.pbs.org';
+        echo 'ERROR: URL must be hosted by video.klrn.org or www.pbs.org';
     }
 ?>
