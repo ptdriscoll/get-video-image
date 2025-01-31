@@ -85,7 +85,8 @@
     </div>
 
     <script>
-      const getWebpageAPI = 'http://localhost/get-image/api/get-webpage.php';
+      const getWebpageAPI =
+        'http://localhost/dev/get-video-image/api/get-webpage.php';
       const form = document.querySelector('#get_image');
       form.addEventListener('submit', submit);
 
@@ -138,7 +139,16 @@
             .then((res) => res.text())
             .then((text) => {
               let arr = [];
-              if (text) arr = text.split(`style="--background-image: url('`);
+              if (text) {
+                arr = text.split(
+                  `class="EmbedModal_embed_modal__info__HYg9h"><img src="`
+                );
+                if (arr.length === 1) {
+                  arr = text.split(
+                    `ShowDetailHero_detail_hero_mezzanine_video_initializer__xmlRs"><img src="`
+                  );
+                }
+              }
               if (arr.length > 1) image = arr[1].split('?')[0].trim();
               if (image) image += '?crop=1280x720';
               showImage(image);
